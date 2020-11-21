@@ -7,8 +7,8 @@ const Header = () => {
 
   return (
     <div className="Header">
-      <h1>ReactHooks</h1>
-      <button type="button" onClick={handleClick}>
+      <h1 className="title">ReactHooks</h1>
+      <button className="button" type="button" onClick={handleClick}>
         {darkMode ? "Dark Mode" : "Light Mode"}
       </button>
     </div>
