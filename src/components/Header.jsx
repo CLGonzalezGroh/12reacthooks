@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+
+import ThemeContext from "../context/ThemeContext";
+import themes from "../context/themes";
 
 const Header = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useContext(ThemeContext);
 
-  const handleClick = () => setDarkMode(!darkMode);
+  const handleClick = () => {
+    setDarkMode(!darkMode);
+    !darkMode ? setTheme(themes.dark) : setTheme(themes.light);
+  };
 
   return (
-    <nav className="Header navbar is-light">
+    <nav className={theme.headerClass}>
       <div className="container">
         <div className="navbar-brand">
           <h1 className="navbar-item title">ReactHooks</h1>
@@ -15,7 +22,7 @@ const Header = () => {
           <div className="navbar-item">
             <div className="buttons">
               <button
-                className="button is-primary"
+                className={theme.buttonClass}
                 type="button"
                 onClick={handleClick}
               >
