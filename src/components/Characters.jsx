@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useReducer } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useReducer,
+  useMemo,
+} from "react";
 
 import ThemeContext from "../context/ThemeContext";
 
@@ -19,9 +25,10 @@ const favoriteReducer = (state, action) => {
 };
 
 const Characters = () => {
-  const [characters, setCharacters] = useState([""]);
+  const [characters, setCharacters] = useState([]);
   const { theme } = useContext(ThemeContext);
   const [favorites, dispatch] = useReducer(favoriteReducer, initialState);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetch("https://rickandmortyapi.com/api/character/")
@@ -33,16 +40,47 @@ const Characters = () => {
   const handleClick = (favorite) => {
     dispatch({ type: "ADD_TO_FAVORITE", payload: favorite });
   };
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+  };
+
+  // const filteredCharacters = characters.filter((character) => {
+  //   return character.name.toLowerCase().includes(search.toLowerCase());
+  // });
+
+  const filteredCharacters = useMemo(() => {
+    return characters.filter((character) =>
+      character.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [characters, search]);
+
   return (
     <>
+      <section className="hero is-primary">
+        <div className="hero-body">
+          <div className="container">
+            <h1 className="title">Search</h1>
+            <input
+              type="text"
+              placeholder="Search character name"
+              class="input is-rounded"
+              onChange={handleSearch}
+              value={search}
+            />
+          </div>
+        </div>
+      </section>
       <section className={theme.sectionClass}>
         <div className="container">
           <h1 className={theme.titleClass}>Rick and Morty</h1>
           <h2 className={theme.titleClass}>Favorites</h2>
           {favorites.favorites.map((favorite) => (
-            <h3 key={favorite.id ? favorite.id.toString() : "99"}>
+            <li
+              key={favorite.id ? favorite.id.toString() : "99"}
+              className={theme.cardContentColumnClass}
+            >
               {favorite.name}
-            </h3>
+            </li>
           ))}
         </div>
       </section>
@@ -51,7 +89,7 @@ const Characters = () => {
           <h1 className={theme.titleClass}>Rick and Morty</h1>
           <h2 className={theme.titleClass}>Characters</h2>
           <div className="columns is-multiline">
-            {characters.map((character) => {
+            {filteredCharacters.map((character) => {
               return (
                 <div
                   key={character.id ? character.id.toString() : "99"}

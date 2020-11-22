@@ -12,7 +12,7 @@ const themes = {
   },
   dark: {
     buttonClass: "button is-primary is-inverted",
-    headerClass: "Header navbar is-primary",
+    headerClass: "Header navbar is-dark",
     sectionClass: "section Character has-background-dark",
     titleClass: "title has-text-white",
     subtitleClass: "subtitle has-text-white",
