@@ -1,16 +1,20 @@
 import React, {
   useState,
-  useEffect,
   useContext,
   useReducer,
   useMemo,
+  useRef,
+  useCallback,
 } from "react";
 
 import ThemeContext from "../context/ThemeContext";
+import Search from "./Search";
+import useCharacters from "../hooks/useCharacters";
 
 const initialState = {
   favorites: [],
 };
+const API = "https://rickandmortyapi.com/api/character/?page=2";
 
 const favoriteReducer = (state, action) => {
   switch (action.type) {
@@ -25,24 +29,23 @@ const favoriteReducer = (state, action) => {
 };
 
 const Characters = () => {
-  const [characters, setCharacters] = useState([]);
   const { theme } = useContext(ThemeContext);
   const [favorites, dispatch] = useReducer(favoriteReducer, initialState);
   const [search, setSearch] = useState("");
+  const searchInput = useRef(null);
 
-  useEffect(() => {
-    fetch("https://rickandmortyapi.com/api/character/")
-      .then((response) => response.json())
-      .then((data) => setCharacters(data.results))
-      .catch((error) => console.log(error));
-  }, []);
+  const characters = useCharacters(API);
 
   const handleClick = (favorite) => {
     dispatch({ type: "ADD_TO_FAVORITE", payload: favorite });
   };
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-  };
+  // const handleSearch = () => {
+  //   setSearch(searchInput.current.value);
+  // };
+
+  const handleSearch = useCallback(() => {
+    setSearch(searchInput.current.value);
+  }, []);
 
   // const filteredCharacters = characters.filter((character) => {
   //   return character.name.toLowerCase().includes(search.toLowerCase());
@@ -56,20 +59,11 @@ const Characters = () => {
 
   return (
     <>
-      <section className="hero is-primary">
-        <div className="hero-body">
-          <div className="container">
-            <h1 className="title">Search</h1>
-            <input
-              type="text"
-              placeholder="Search character name"
-              class="input is-rounded"
-              onChange={handleSearch}
-              value={search}
-            />
-          </div>
-        </div>
-      </section>
+      <Search
+        search={search}
+        searchInput={searchInput}
+        handleSearch={handleSearch}
+      />
       <section className={theme.sectionClass}>
         <div className="container">
           <h1 className={theme.titleClass}>Rick and Morty</h1>
